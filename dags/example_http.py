@@ -16,6 +16,7 @@ with DAG(
     dag.doc_md = __doc__
 
     task_post_op = HttpOperator(
+        http_conn_id="httpbin_conn",
         task_id="simple_http_post",
         endpoint="post",
         data=json.dumps({"data": "data"}),
@@ -23,6 +24,7 @@ with DAG(
     )
 
     task_get_op = HttpOperator(
+        http_conn_id="httpbin_conn",
         task_id="get_op",
         method="GET",
         endpoint="get",
