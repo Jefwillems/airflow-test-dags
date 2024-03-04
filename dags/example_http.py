@@ -25,7 +25,7 @@ def example_http_dag():
     @task()
     def get_cat_fact(time: str):
         response = requests.get(url)
-        return {"cat_fact": response.json()["fact"], time: time}
+        return {"cat_fact": response.json()["fact"], 'time': time}
 
     @task()
     def print_cat_fact(fact):
