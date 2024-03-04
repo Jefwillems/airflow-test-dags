@@ -4,7 +4,7 @@ import json
 from airflow import DAG
 from airflow.providers.http.operators.http import HttpOperator
 from airflow.decorators import task, dag
-        import requests
+import requests
 
 url = "http://catfact.ninja/fact"
 
