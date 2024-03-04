@@ -4,41 +4,34 @@ import json
 from airflow import DAG
 from airflow.providers.http.operators.http import HttpOperator
 from airflow.decorators import task, dag
+        import requests
+
+url = "http://catfact.ninja/fact"
 
 
 @dag(
-    dag_id="example_http_operator",
+    dag_id="example_http_dag",
     default_args={"retries": 1},
     tags=["example"],
     start_date=datetime(2021, 1, 1),
     catchup=False,
     doc_md=__doc__,
 )
-def example_http_operator():
+def example_http_dag():
     @task()
     def get_time():
         return datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
-    t = get_time()
+    @task()
+    def get_cat_fact(time: str):
+        response = requests.get(url)
+        return {"cat_fact": response.json()["fact"], time: time}
 
-    task_post_op = HttpOperator(
-        http_conn_id="httpbin_conn",
-        task_id="simple_http_post",
-        endpoint="post",
-        data=json.dumps({"data": t}),
-        headers={"Content-Type": "application/json"},
-    )
+    @task()
+    def print_cat_fact(fact):
+        print(f"Cat fact: {fact['cat_fact']} \t Time: {fact['time']}")
 
-    task_get_op = HttpOperator(
-        http_conn_id="httpbin_conn",
-        task_id="get_op",
-        method="GET",
-        endpoint="get",
-        data={"param1": "value1", "param2": "value2"},
-        headers={},
-    )
-
-    task_post_op >> task_get_op
+    print_cat_fact(get_cat_fact(get_time()))
 
 
-example_http_operator()
+example_http_dag()
