@@ -39,3 +39,6 @@ def example_http_operator():
     )
 
     task_post_op >> task_get_op
+
+
+example_http_operator()
